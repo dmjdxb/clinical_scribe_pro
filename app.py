@@ -21,7 +21,12 @@ import pandas as pd
 from dataclasses import dataclass
 import wave
 import io
-import pyperclip
+# Try to import pyperclip, but don't fail if not available
+try:
+    import pyperclip
+    PYPERCLIP_AVAILABLE = True
+except ImportError:
+    PYPERCLIP_AVAILABLE = False
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
@@ -1188,11 +1193,16 @@ if api_key:
                     )
                     
                     if st.button("📋 Copy All", use_container_width=True):
-                        try:
-                            pyperclip.copy(clipboard_text)
-                            st.success("✅ Copied! Paste in MedNet Flow")
-                        except:
-                            st.info("Select all text above and copy (Ctrl+C)")
+                        if PYPERCLIP_AVAILABLE:
+                            try:
+                                pyperclip.copy(clipboard_text)
+                                st.success("✅ Copied! Paste in MedNet Flow")
+                            except Exception as e:
+                                st.code(clipboard_text, language=None)
+                                st.info("Select all text above and copy manually (Ctrl+C or Cmd+C)")
+                        else:
+                            st.code(clipboard_text, language=None)
+                            st.info("Select all text above and copy manually (Ctrl+C or Cmd+C)")
                 
                 elif export_format == "Direct Entry Guide":
                     guide = integrator.generate_entry_guide(mednet_data)
