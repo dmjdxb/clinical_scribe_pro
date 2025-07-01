@@ -1,0 +1,7 @@
+streamlit 
+speechrecognition 
+openai 
+pyaudio 
+pandas 
+numpy 
+pyperclip
